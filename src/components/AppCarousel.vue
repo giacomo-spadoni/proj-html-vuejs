@@ -9,8 +9,8 @@ export default {
       index: 0,
       animationRight: false,
       animationLeft: false,
-      falseButton: !false,
       timerSlider: null,
+      actuallyMoving: false,
     };
   },
   methods: {
@@ -18,28 +18,33 @@ export default {
       return new URL(`../assets/${filename}`, import.meta.url).href;
     },
     scrollRight() {
-      clearInterval(this.timerSlider);
-      this.falseButton = !true;
-      this.animationRight = true;
-      setTimeout(() => {
-        this.index = (this.index + 1) % this.posts.length;
-        this.updateViewed();
-        this.animationRight = false;
-        this.falseButton = !false;
-        this.timerSlider = setInterval(this.scrollRight, 4000);
-      }, 1000);
+      if (this.actuallyMoving == false) {
+        this.actuallyMoving = true;
+        clearInterval(this.timerSlider);
+        this.animationRight = true;
+        setTimeout(() => {
+          this.actuallyMoving = true;
+          this.index = (this.index + 1) % this.posts.length;
+          this.updateViewed();
+          this.animationRight = false;
+          this.actuallyMoving = false;
+          this.timerSlider = setInterval(this.scrollRight, 4000);
+        }, 400);
+      }
     },
     scrollLeft() {
-      clearInterval(this.timerSlider);
-      this.falseButton = !true;
-      this.animationLeft = true;
-      setTimeout(() => {
-        this.index = (this.index - 1 + this.posts.length) % this.posts.length;
-        this.updateViewed();
-        this.animationLeft = false;
-        this.falseButton = !false;
-        this.timerSlider = setInterval(this.scrollRight, 4000);
-      }, 1000);
+      if (this.actuallyMoving == false) {
+        this.actuallyMoving = true;
+        clearInterval(this.timerSlider);
+        this.animationLeft = true;
+        setTimeout(() => {
+          this.index = (this.index - 1 + this.posts.length) % this.posts.length;
+          this.updateViewed();
+          this.animationLeft = false;
+          this.actuallyMoving = false;
+          this.timerSlider = setInterval(this.scrollRight, 4000);
+        }, 400);
+      }
     },
     updateViewed() {
       this.viewed = [];
@@ -78,19 +83,11 @@ export default {
     </div>
     <div class="frame-left"></div>
     <div class="frame-right"></div>
-    <div :class="{ indice: falseButton }" class="btn-slider">
+    <div class="btn-slider">
       <button @click="scrollLeft">
         <i class="fa-solid fa-angles-left"></i>
       </button>
       <button @click="scrollRight">
-        <i class="fa-solid fa-angles-right"></i>
-      </button>
-    </div>
-    <div class="btn-slider">
-      <button class="false">
-        <i class="fa-solid fa-angles-left"></i>
-      </button>
-      <button class="false">
         <i class="fa-solid fa-angles-right"></i>
       </button>
     </div>
@@ -102,8 +99,6 @@ export default {
   padding: 3rem 0;
   position: relative;
   overflow: hidden;
-  /* display: flex;
-  align-items: center; */
 }
 
 .frame-left {
@@ -169,12 +164,14 @@ export default {
 
 .animation-right {
   transform: translateX(-24vw);
-  transition: 1s;
+  transition-timing-function: ease-out;
+  transition: 0.4s;
 }
 
 .animation-left {
   transform: translateX(24vw);
-  transition: 1s;
+  transition-timing-function: ease-out;
+  transition: 0.4s;
 }
 
 .btn-slider {
@@ -195,19 +192,10 @@ button {
   cursor: pointer;
   border: 2px solid red;
   color: red;
+  transition: 1s;
 }
 
 button:hover {
-  transition: 0.5s;
-  background-color: red;
-  color: white;
-}
-
-.indice {
-  z-index: 10;
-}
-
-.false {
   background-color: red;
   color: white;
 }
@@ -220,6 +208,5 @@ img {
   width: 23vw;
   object-fit: cover;
   border-radius: 6px 6px 0 0;
-  /* object-position: center; */
 }
 </style>

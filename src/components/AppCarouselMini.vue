@@ -9,7 +9,7 @@ export default {
       index: 0,
       animationRight: false,
       animationLeft: false,
-      falseButton: !false,
+      actuallyMoving: false,
       timerSlider: null,
     };
   },
@@ -18,28 +18,32 @@ export default {
       return new URL(`../assets/${filename}`, import.meta.url).href;
     },
     scrollRight() {
-      clearInterval(this.timerSlider);
-      this.falseButton = !true;
-      this.animationRight = true;
-      setTimeout(() => {
-        this.index = (this.index + 1) % this.posts.length;
-        this.updateViewed();
-        this.animationRight = false;
-        this.falseButton = !false;
-        this.timerSlider = setInterval(this.scrollRight, 4000);
-      }, 1000);
+      if (this.actuallyMoving == false) {
+        this.actuallyMoving = true;
+        clearInterval(this.timerSlider);
+        this.animationRight = true;
+        setTimeout(() => {
+          this.index = (this.index + 1) % this.posts.length;
+          this.updateViewed();
+          this.animationRight = false;
+          this.actuallyMoving = false;
+          this.timerSlider = setInterval(this.scrollRight, 4000);
+        }, 400);
+      }
     },
     scrollLeft() {
-      clearInterval(this.timerSlider);
-      this.falseButton = !true;
-      this.animationLeft = true;
-      setTimeout(() => {
-        this.index = (this.index - 1 + this.posts.length) % this.posts.length;
-        this.updateViewed();
-        this.animationLeft = false;
-        this.falseButton = !false;
-        this.timerSlider = setInterval(this.scrollRight, 4000);
-      }, 1000);
+      if (this.actuallyMoving == false) {
+        this.actuallyMoving = true;
+        clearInterval(this.timerSlider);
+        this.animationLeft = true;
+        setTimeout(() => {
+          this.index = (this.index - 1 + this.posts.length) % this.posts.length;
+          this.updateViewed();
+          this.animationLeft = false;
+          this.actuallyMoving = false;
+          this.timerSlider = setInterval(this.scrollRight, 4000);
+        }, 400);
+      }
     },
     updateViewed() {
       this.viewed = [];
@@ -175,12 +179,12 @@ export default {
 
 .animation-right {
   transform: translateX(-24vw);
-  transition: 1s;
+  transition: 0.4s;
 }
 
 .animation-left {
   transform: translateX(24vw);
-  transition: 1s;
+  transition: 0.4s;
 }
 
 .btn-slider {
